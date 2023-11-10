@@ -1,0 +1,6 @@
+datetime 
+PyMySQL
+numpy
+mysql-connector-python
+-e .
+
