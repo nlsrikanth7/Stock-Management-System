@@ -12,23 +12,11 @@ project_name = "StockMgmtSystem"
 
 list_of_files = [
     ".github/workflows/.gitkeep", # we need it for CI/CD deployment in YAML file
-    f"src/{project_name}/__init__.py", # source folder and init contructor file
-    f"src/{project_name}/components/__init__.py",
-    f"src/{project_name}/utils/__init__.py", 
-    f"src/{project_name}/config/__init__.py",
-    f"src/{project_name}/config/configuration.py",
-    f"src/{project_name}/pipeline/__init__.py",
-    f"src/{project_name}/entity/__init__.py",
-    f"src/{project_name}/constants/__init__.py",
-    "config/config.yaml",
-    "dvc.yaml",
-    "params.yaml",
     "requirements.txt",
     "setup.py",
-    "research/trails.ipynb",
     "main.py",
-    "templates/index.html"
-
+    "templates/index.html",
+    "create_mysql_database.py"
 
 ]
 

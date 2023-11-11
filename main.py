@@ -22,29 +22,29 @@ alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 #Connection to mysql database
 def connection():
-    conn = pymysql.connect(host = 'localhost',user = 'root',password ='Shrikanth_1', db='stockmanagementsystem')
-    return conn
+    mydb = pymysql.connect(host = 'localhost',user = 'root',password ='Shrikanth_1', db='stockmanagementsystem')
+    return mydb
 
-conn = connection()
-cursor = conn.cursor()
+mydb = connection()
+mycursor = mydb.cursor()
 
 for i in range(0,5):
     placeholderArray[i]=tkinter.StringVar()
 
 # Read the data from table stocks
 def read():
-    cursor.connection.ping()
+    mycursor.connection.ping()
     sql=f"SELECT 'item_id', 'name', 'price', 'quantity', 'category', 'date' FROM stocks ORDER BY 'id' DESC"
-    cursor.execute(sql)
-    results=cursor.fetchall()
-    conn.commit()
-    conn.close()
+    mycursor.execute(sql)
+    results=mycursor.fetchall()
+    mydb.commit()
+    mydb.close()
     return results
 
 # dummydata =[
-#     ['123', '1345', '4567', '1234', '9877', '2345'],
-#     ['12', '1345', '4567', '1234', '9877', '2345'],
-#     ['143', '1345', '4567', '1234', '9877', '2345'],
+#     ['439-Y', '1345', '4567', '1234', '9877', '2345'],
+#     ['153-Y', '1345', '4567', '1234', '9877', '2345'],
+#     ['535-D', '1345', '4567', '1234', '9877', '2345'],
 #     ['153', '1345', '4567', '1234', '9877', '2345'],
 #     ['163', '1345', '4567', '1234', '9877', '2345'],
 #     ['183', '1345', '4567', '1234', '9877', '2345'],
@@ -53,7 +53,7 @@ def read():
 def refreshTable():
     for data in my_tree.get_children():
         my_tree.delete(data)
-    for array in read():
+    for array in read(): #for array in dummydata:
         my_tree.insert(parent='',index='end',iid=array,text="",values=(array),tag="orow")
     my_tree.tag_configure('orow',background="#02577A")
     my_tree.pack()
@@ -101,19 +101,19 @@ def save():
         return
     
     try:
-        cursor.connection.ping()
+        mycursor.connection.ping()
         sql=f"SELECT * FROM stocks WHERE `item_id` = '{itemId}' "
-        cursor.execute(sql)
-        checkItemNo=cursor.fetchall()
+        mycursor.execute(sql)
+        checkItemNo=mycursor.fetchall()
         if len(checkItemNo) > 0:
             messagebox.showwarning("","Item Id already used")
             return
         else:
-            cursor.connection.ping()
+            mycursor.connection.ping()
             sql=f"INSERT INTO stocks (`item_id`, `name`, `price`, `quantity`, `category`) VALUES ('{itemId}','{name}','{price}','{qnt}','{cat}')"
-            cursor.execute(sql)
-        conn.commit()
-        conn.close()
+            mycursor.execute(sql)
+        mydb.commit()
+        mydb.close()
         for num in range(0,5):
             setph('',(num))
     except:
@@ -122,6 +122,129 @@ def save():
     refreshTable()
 
 
+# # Update Entries 
+# def update():
+#     selectedItemId = ''
+#     try:
+#         selectedItem = my_tree.selection()[0]
+#         selectedItemId = str(my_tree.item(selectedItem)['values'][0])
+#     except:
+#         messagebox.showwarning("", "Please select a data row")
+#     print(selectedItemId)
+#     itemId = str(itemIDEntry.get())
+#     name = str(nameEntry.get())
+#     price = str(priceEntry.get())
+#     qnt = str(qntEntry.get())
+#     cat = str(categoryEntry.get())
+#     if not(itemId and itemId.strip()) or not(name and name.strip()) or not(price and price.strip()) or not(qnt and qnt.strip()) or not(cat and cat.strip()):
+#         messagebox.showwarning("","Please fill up all entries")
+#         return
+#     if(selectedItemId!=itemId):
+#         messagebox.showwarning("","You can't change Item ID")
+#         return
+#     try:
+#         cursor.connection.ping()
+#         sql=f"UPDATE stocks SET `name` = '{name}', `price` = '{price}', `quantity` = '{qnt}', `category` = '{cat}' WHERE `item_id` = '{itemId}' "
+#         cursor.execute(sql)
+#         conn.commit()
+#         conn.close()
+#         for num in range(0,5):
+#             setph('',(num))
+#     except Exception as err:
+#         messagebox.showwarning("","Error occured ref: "+str(err))
+#         return
+#     refreshTable()
+
+# def delete():
+#     try:
+#         if(my_tree.selection()[0]):
+#             decision = messagebox.askquestion("", "Delete the selected data?")
+#             if(decision != 'yes'):
+#                 return
+#             else:
+#                 selectedItem = my_tree.selection()[0]
+#                 itemId = str(my_tree.item(selectedItem)['values'][0])
+#                 try:
+#                     cursor.connection.ping()
+#                     sql=f"DELETE FROM stocks WHERE `item_id` = '{itemId}' "
+#                     cursor.execute(sql)
+#                     conn.commit()
+#                     conn.close()
+#                     messagebox.showinfo("","Data has been successfully deleted")
+#                 except:
+#                     messagebox.showinfo("","Sorry, an error occured")
+#                 refreshTable()
+#     except:
+#         messagebox.showwarning("", "Please select a data row")
+
+# def select():
+#     try:
+#         selectedItem = my_tree.selection()[0]
+#         itemId = str(my_tree.item(selectedItem)['values'][0])
+#         name = str(my_tree.item(selectedItem)['values'][1])
+#         price = str(my_tree.item(selectedItem)['values'][2])
+#         qnt = str(my_tree.item(selectedItem)['values'][3])
+#         cat = str(my_tree.item(selectedItem)['values'][4])
+#         setph(itemId,0)
+#         setph(name,1)
+#         setph(price,2)
+#         setph(qnt,3)
+#         setph(cat,4)
+#     except:
+#         messagebox.showwarning("", "Please select a data row")
+
+# def find():
+#     itemId = str(itemIDEntry.get())
+#     name = str(nameEntry.get())
+#     price = str(priceEntry.get())
+#     qnt = str(qntEntry.get())
+#     cat = str(categoryEntry.get())
+#     cursor.connection.ping()
+#     if(itemId and itemId.strip()):
+#         sql = f"SELECT `item_id`, `name`, `price`, `quantity`, `category`, `date` FROM stocks WHERE `item_id` LIKE '%{itemId}%' "
+#     elif(name and name.strip()):
+#         sql = f"SELECT `item_id`, `name`, `price`, `quantity`, `category`, `date` FROM stocks WHERE `name` LIKE '%{name}%' "
+#     elif(price and price.strip()):
+#         sql = f"SELECT `item_id`, `name`, `price`, `quantity`, `category`, `date` FROM stocks WHERE `price` LIKE '%{price}%' "
+#     elif(qnt and qnt.strip()):
+#         sql = f"SELECT `item_id`, `name`, `price`, `quantity`, `category`, `date` FROM stocks WHERE `quantity` LIKE '%{qnt}%' "
+#     elif(cat and cat.strip()):
+#         sql = f"SELECT `item_id`, `name`, `price`, `quantity`, `category`, `date` FROM stocks WHERE `category` LIKE '%{cat}%' "
+#     else:
+#         messagebox.showwarning("","Please fill up one of the entries")
+#         return
+#     cursor.execute(sql)
+#     try:
+#         result = cursor.fetchall();
+#         for num in range(0,5):
+#             setph(result[0][num],(num))
+#         conn.commit()
+#         conn.close()
+#     except:
+#         messagebox.showwarning("","No data found")
+
+# def clear():
+#     for num in range(0,5):
+#         setph('',(num))
+
+# # Export to Excel
+# def exportExcel():
+#     cursor.connection.ping()
+#     sql=f"SELECT `item_id`, `name`, `price`, `quantity`, `category`, `date` FROM stocks ORDER BY `id` DESC"
+#     cursor.execute(sql)
+#     dataraw=cursor.fetchall()
+#     date = str(datetime.now())
+#     date = date.replace(' ', '_')
+#     date = date.replace(':', '-')
+#     dateFinal = date[0:16]
+#     with open("stocks_"+dateFinal+".csv",'a',newline='') as f:
+#         w = csv.writer(f, dialect='excel')
+#         for record in dataraw:
+#             w.writerow(record)
+#     print("saved: stocks_"+dateFinal+".csv")
+#     conn.commit()
+#     conn.close()
+#     messagebox.showinfo("","Excel file downloaded")
 
 #Frame
 frame = tkinter.Frame(gui, bg='#02577A')
@@ -134,12 +257,12 @@ manageFrame = tkinter.LabelFrame(frame, text ='Manage', borderwidth=5)
 manageFrame.grid(row=0, column=0, sticky='w', padx=[10,150], pady=20, ipadx=[6])
 
 saveBtn = Button(manageFrame, text='SAVE', width=5, borderwidth=3, bg=btnColor, fg='blue', command = save)
-updateBtn = Button(manageFrame, text='UPDATE', width=5, borderwidth=3, bg=btnColor, fg='blue')
-deleteBtn = Button(manageFrame, text='DELETE', width=5, borderwidth=3, bg=btnColor, fg='blue')
-selectBtn = Button(manageFrame, text='SELECT', width=5, borderwidth=3, bg=btnColor, fg='blue')
-findBtn = Button(manageFrame, text='FIND', width=5, borderwidth=3, bg=btnColor, fg='blue')
-clearBtn = Button(manageFrame, text='CLEAR', width=5, borderwidth=3, bg=btnColor, fg='blue')
-exportBtn = Button(manageFrame, text='EXPORT', width=5, borderwidth=3, bg=btnColor, fg='blue')
+updateBtn = Button(manageFrame, text='UPDATE', width=5, borderwidth=3, bg=btnColor, fg='blue')#, command = update)
+deleteBtn = Button(manageFrame, text='DELETE', width=5, borderwidth=3, bg=btnColor, fg='blue')#, command = delete)
+selectBtn = Button(manageFrame, text='SELECT', width=5, borderwidth=3, bg=btnColor, fg='blue')#, command = select)
+findBtn = Button(manageFrame, text='FIND', width=5, borderwidth=3, bg=btnColor, fg='blue')#, command = find)
+clearBtn = Button(manageFrame, text='CLEAR', width=5, borderwidth=3, bg=btnColor, fg='blue')#, command = clear)
+exportBtn = Button(manageFrame, text='EXPORT', width=5, borderwidth=3, bg=btnColor, fg='blue')#, command = exportExcel)
 
 saveBtn.grid(row=0, column=0, padx=5, pady=5)
 updateBtn.grid(row=0, column=1, padx=5, pady=5)
